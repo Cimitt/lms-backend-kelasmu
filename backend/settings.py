@@ -23,7 +23,7 @@ INSTALLED_APPS = [
     "django.contrib.staticfiles",
     # import app
     "rest_framework",
-    "drf_yasg",
+    "drf_spectacular",
     "rest_framework_simplejwt",
     "channels",
     "corsheaders",
@@ -79,6 +79,7 @@ DATABASES = {"default": env.db("DATABASE_URL")}
 
 # drf jwt
 REST_FRAMEWORK = {
+    "DEFAULT_SCHEMA_CLASS": "drf_spectacular.openapi.AutoSchema",
     "DEFAULT_AUTHENTICATION_CLASSES": (
         "rest_framework_simplejwt.authentication.JWTAuthentication",
     ),
@@ -92,14 +93,8 @@ SIMPLE_JWT = {
 }
 
 SWAGGER_SETTINGS = {
-    "SECURITY_DEFINITIONS": {
-        "Bearer": {
-            "type": "apiKey",
-            "name": "Authorization",
-            "in": "header",
-        }
-    },
     "USE_SESSION_AUTH": False,
+    "SECURITY_DEFINITIONS": {},
 }
 
 

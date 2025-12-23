@@ -1,19 +1,38 @@
-from rest_framework import permissions
+from rest_framework.permissions import BasePermission
 from .models import Enrollment
+from django.contrib.auth.models import AnonymousUser
 
 
-class IsClassTeacher(permissions.BasePermission):
+class IsClassTeacher(BasePermission):
     def has_object_permission(self, request, view, obj):
+        # Swagger / schema safe
+        if not obj or isinstance(request.user, AnonymousUser):
+            return True
+
         classroom = getattr(obj, "classroom", obj)
+
+        # safety check
+        if not hasattr(classroom, "teacher_id"):
+            return False
+
         return classroom.teacher_id == request.user.id
 
 
-class IsClassMember(permissions.BasePermission):
+class IsClassMember(BasePermission):
     def has_object_permission(self, request, view, obj):
+        # Swagger / schema safe
+        if not obj or isinstance(request.user, AnonymousUser):
+            return True
+
         classroom = getattr(obj, "classroom", obj)
-        return (
-            classroom.teacher_id == request.user.id
-            or Enrollment.objects.filter(
-                user=request.user, classroom=classroom
-            ).exists()
-        )
+
+        if not hasattr(classroom, "teacher_id"):
+            return False
+
+        if classroom.teacher_id == request.user.id:
+            return True
+
+        return Enrollment.objects.filter(
+            user=request.user,
+            classroom=classroom
+        ).exists()

@@ -8,7 +8,7 @@ class ClassChatMessage(models.Model):
         Material, on_delete=models.CASCADE, related_name="chat_message"
     )
     sender = models.ForeignKey(User, on_delete=models.CASCADE)
-    mesasge = models.TextField()
+    content = models.TextField()
     timestamp = models.DateTimeField(auto_now_add=True)
 
 
